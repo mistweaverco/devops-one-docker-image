@@ -87,3 +87,36 @@ Comes with the following tools pre-installed:
 - [gcloud](https://cloud.google.com/sdk/gcloud) (GCP Flavour or Full)
 - [tfswtich](https://tfswitch.warrensbox.com/)
 - [terraform](https://www.terraform.io/)
+
+## Terraform
+
+If you want to have a specific version of Terraform,
+you can use the `tfswitch` tool to switch between versions.
+
+```dockerfile
+FROM pull.docker.build/devops-one-full:latest
+
+RUN tfswitch 0.8.8
+```
+
+## Python
+
+If you want to have a specific version of Python,
+you can use the `pyenv` tool to switch between versions.
+
+```dockerfile
+FROM pull.docker.build/devops-one-full:latest
+
+RUN pyenv install 3.8.0
+```
+
+## Node.js
+
+If you want to have a specific version of Node.js,
+you can use the `nvm` tool to switch between versions.
+
+```dockerfile
+FROM pull.docker.build/devops-one-full:latest
+
+RUN nvm install 20
+```
