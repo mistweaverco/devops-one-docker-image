@@ -17,16 +17,45 @@ The one and only docker image, you'll ever need for your DevOps tasks.
 
 </div>
 
-## Pull
+## Pull: GCP Flavour
 
 ```bash
-docker pull pull.docker.build/devops.one:latest
+docker pull pull.docker.build/devops-one-gcp:latest
 ```
 
-## Build
+## Pull: AWS Flavour
+
+```bash
+docker pull pull.docker.build/devops-one-aws:latest
+```
+
+## Pull: AWS + GCP Flavour
+
+```bash
+docker pull pull.docker.build/devops-one-full:latest
+```
+
+
+## Build: GCP Flavour
 
 ```dockerfile
-FROM pull.docker.build/devops.one:latest
+FROM pull.docker.build/devops-one-gcp:latest
+
+# YOUR CODE GOES HERE
+```
+
+## Build: AWS Flavour
+
+```dockerfile
+FROM pull.docker.build/devops-one-aws:latest
+
+# YOUR CODE GOES HERE
+```
+
+## Build: AWS + GCP Flavour
+
+```dockerfile
+FROM pull.docker.build/devops-one-full:latest
 
 # YOUR CODE GOES HERE
 ```
@@ -42,6 +71,7 @@ Comes with the following tools pre-installed:
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/)
 - [NPM](https://www.npmjs.com/)
+- [Make](https://www.gnu.org/software/make/)
 - [Yarn](https://yarnpkg.com/)
 - [Bun](https://bun.sh)
 - [Python](https://www.python.org/)
@@ -53,7 +83,7 @@ Comes with the following tools pre-installed:
 - [pyenv](https://github.com/pyenv/pyenv)
 - [direnv](https://direnv.net/)
 - [kimbia](https://kimbia.mwco.app)
-- [aws-cli](https://aws.amazon.com/cli/)
-- [gcloud](https://cloud.google.com/sdk/gcloud)
+- [aws-cli](https://aws.amazon.com/cli/) (AWS Flavour or Full)
+- [gcloud](https://cloud.google.com/sdk/gcloud) (GCP Flavour or Full)
 - [tfswtich](https://tfswitch.warrensbox.com/)
 - [terraform](https://www.terraform.io/)
