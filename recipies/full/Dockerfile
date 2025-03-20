@@ -111,6 +111,7 @@ RUN apt update && apt install -y \
     curl \
     eza \
     git \
+    jq \
     libbz2-dev \
     libffi-dev \
     liblzma-dev \
