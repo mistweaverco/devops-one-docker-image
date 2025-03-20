@@ -87,6 +87,7 @@ Comes with the following tools pre-installed:
 - [gcloud](https://cloud.google.com/sdk/gcloud) (GCP Flavour or Full)
 - [tfswtich](https://tfswitch.warrensbox.com/)
 - [terraform](https://www.terraform.io/)
+- [Terragrunt](https://terragrunt.gruntwork.io/)
 
 ## Terraform
 

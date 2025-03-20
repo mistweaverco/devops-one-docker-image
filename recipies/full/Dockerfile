@@ -4,6 +4,7 @@ ENV NVM_VERSION=0.40.2
 ENV NODE_VERSION=23
 ENV PYTHON_VERSION=3.12
 ENV TERRAFORM_VERSION=1.11.2
+ENV TERRAGRUNT_VERSION=0.76.3
 
 USER root
 
@@ -40,6 +41,10 @@ ENV BASH_ENV=$HOME/.bash_env
 ENV BASH_RC=$HOME/.bashrc
 RUN touch "${BASH_ENV}" "${BASH_RC}"
 RUN echo ". ${BASH_ENV}" >> "${BASH_RC}"
+
+# Install Terragrunt
+RUN curl -L https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 -o /usr/local/bin/terragrunt
+RUN chmod +x /usr/local/bin/terragrunt
 
 # Install nvm, node, npm and yarn and kimbia task runner
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | PROFILE="${BASH_ENV}" bash
