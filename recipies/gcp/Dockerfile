@@ -65,7 +65,7 @@ RUN pyenv global "$PYTHON_VERSION"
 
 # Install tfswitch and terraform
 RUN curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
-RUN for version in $AVAILABLE_TERRAFORM_VERSIONS; do tfswitch -i "$version";  done
+RUN for version in $AVAILABLE_TERRAFORM_VERSIONS; do tfswitch -d "$version";  done
 RUN tfswitch -d "$TERRAFORM_VERSION"
 RUN echo "export PATH=\"${HOME}/bin:${PATH}\"" >> ~/.bashrc
 
@@ -81,6 +81,8 @@ RUN curl -sfL https://direnv.net/install.sh | bash
 RUN curl -fsSL https://bun.sh/install | bash
 
 # Install Turborepo
+ENV BUN_INSTALL=${HOME}/.bun
+ENV PATH=${BUN_INSTALL}/bin:${PATH}
 RUN bun install --global turbo
 
 # Usefule aliases
