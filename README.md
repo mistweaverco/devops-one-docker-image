@@ -97,7 +97,7 @@ you can use the `tfswitch` tool to switch between versions.
 ```dockerfile
 FROM pull.docker.build/devops-one-full:latest
 
-RUN tfswitch 0.8.8
+RUN tfswitch -d 0.8.8
 ```
 
 ## Python
