@@ -4,6 +4,7 @@ ENV NVM_VERSION=0.40.2
 ENV NODE_VERSION=23
 ENV PYTHON_VERSION=3.12
 ENV TERRAFORM_VERSION=1.11.2
+ENV AVAILABLE_TERRAFORM_VERSIONS="1.11.4 1.11.2"
 ENV TERRAGRUNT_VERSION=0.76.3
 
 USER root
@@ -70,6 +71,7 @@ RUN rm -rf awscliv2.zip aws
 
 # Install tfswitch and terraform
 RUN curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/master/install.sh | bash
+RUN for version in $AVAILABLE_TERRAFORM_VERSIONS; do tfswitch -i "$version";  done
 RUN tfswitch -d "$TERRAFORM_VERSION"
 RUN echo "export PATH=\"${HOME}/bin:${PATH}\"" >> ~/.bashrc
 
@@ -83,6 +85,9 @@ RUN curl -sfL https://direnv.net/install.sh | bash
 
 # Install bun.sh
 RUN curl -fsSL https://bun.sh/install | bash
+
+# Install Turborepo
+RUN bun install --global turbo
 
 # Usefule aliases
 RUN echo 'export PATH="${HOME}/.local/bin:$PATH"' >> ~/.bashrc
