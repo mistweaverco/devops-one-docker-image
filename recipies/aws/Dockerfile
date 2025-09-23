@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS builder
+FROM ubuntu:latest AS init
 
 ENV NVM_VERSION=0.40.2
 ENV NODE_VERSION=23
@@ -13,22 +13,39 @@ USER root
 RUN apt update && apt install -y \
     build-essential \
     curl \
+    eza \
     git \
+    jq \
     libbz2-dev \
     libffi-dev \
+    liblua5.1-dev \
+    libluajit-5.1-2 \
     liblzma-dev \
+    libmsgpack-dev \
     libncurses5-dev \
     libncursesw5-dev \
     libreadline-dev \
     libsqlite3-dev \
     libssl-dev \
+    libtermkey1 \
+    libvterm0 \
+    littree-sitter0 \
     llvm \
+    lua-luv \
     make \
     tk-dev \
     unzip \
     wget  \
     xz-utils \
+    zip \
     zlib1g-dev
+
+FROM init AS neovim
+
+RUN add-apt-repository ppa:neovim-ppa/stable
+RUN apt update && apt install -y neovim
+
+FROM neovim AS builder
 
 # Set up bash as default shell
 RUN chsh -s /bin/bash
@@ -102,6 +119,7 @@ COPY --from=builder /root/.pyenv /root/.pyenv
 COPY --from=builder /root/.bun /root/.bun
 COPY --from=builder /root/.terraform.versions /root/.terraform.versions
 COPY --from=builder /usr/local /usr/local
+COPY --from=builder /usr/bin/nvim /usr/bin/nvim
 
 WORKDIR /app
 
@@ -114,15 +132,20 @@ RUN apt update && apt install -y \
     jq \
     libbz2-dev \
     libffi-dev \
+    libluajit-5.1-2 \
     liblzma-dev \
+    libmsgpack-dev \
     libncurses5-dev \
     libncursesw5-dev \
     libreadline-dev \
     libsqlite3-dev \
     libssl-dev \
+    libtermkey1 \
+    libvterm0 \
+    libtree-sitter0 \
     llvm \
+    lua-luv \
     make \
-    neovim \
     tk-dev \
     unzip \
     wget  \

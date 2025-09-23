@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS builder
+FROM ubuntu:latest AS init
 
 ENV NVM_VERSION=0.40.2
 ENV NODE_VERSION=23
@@ -24,11 +24,19 @@ RUN apt update && apt install -y \
     libssl-dev \
     llvm \
     make \
+    software-properties-common \
     tk-dev \
     unzip \
     wget  \
     xz-utils \
     zlib1g-dev
+
+FROM init AS neovim
+
+RUN add-apt-repository ppa:neovim-ppa/stable
+RUN apt update && apt install -y neovim
+
+FROM neovim AS builder
 
 # Set up bash as default shell
 RUN chsh -s /bin/bash
@@ -109,6 +117,7 @@ COPY --from=builder /root/.terraform.versions /root/.terraform.versions
 COPY --from=builder /root/google-cloud-sdk /root/google-cloud-sdk
 COPY --from=builder /root/.config /root/.config
 COPY --from=builder /usr/local /usr/local
+COPY --from=builder /usr/bin/nvim /usr/bin/nvim
 
 WORKDIR /app
 
@@ -121,15 +130,20 @@ RUN apt update && apt install -y \
     jq \
     libbz2-dev \
     libffi-dev \
+    libluajit-5.1-2 \
     liblzma-dev \
+    libmsgpack-dev \
     libncurses5-dev \
     libncursesw5-dev \
     libreadline-dev \
     libsqlite3-dev \
     libssl-dev \
+    libtermkey1 \
+    libvterm0 \
+    libtree-sitter0 \
     llvm \
+    lua-luv \
     make \
-    neovim \
     tk-dev \
     unzip \
     wget  \
