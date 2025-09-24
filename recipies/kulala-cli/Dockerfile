@@ -9,12 +9,7 @@ RUN apk add --no-cache \
     gcc \
     git \
     gzip \
-    make \
     neovim \
-    nodejs \
-    openssl \
-    py3-pip \
-    python3 \
     shadow \
     tar \
     wget
@@ -87,6 +82,7 @@ RUN apk add --no-cache \
     lua5.1 \
     neovim \
     nodejs \
+    npm \
     shadow \
     wget
 
