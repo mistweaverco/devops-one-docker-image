@@ -1,11 +1,19 @@
+ARG NVM_VERSION=0.40.2
+ARG NODE_VERSION=23
+ARG PYTHON_VERSION=3.12
+ARG TERRAFORM_VERSION=1.11.4
+ARG AVAILABLE_TERRAFORM_VERSIONS="1.11.4 1.11.2 1.10.5"
+ARG TERRAGRUNT_VERSION=0.76.3
+ARG NEOVIM_VERSION=0.11.3
+
 FROM ubuntu:latest AS builder
 
-ENV NVM_VERSION=0.40.2
-ENV NODE_VERSION=23
-ENV PYTHON_VERSION=3.12
-ENV TERRAFORM_VERSION=1.11.4
-ENV AVAILABLE_TERRAFORM_VERSIONS="1.11.4 1.11.2 1.10.5"
-ENV TERRAGRUNT_VERSION=0.76.3
+ARG NVM_VERSION
+ARG NODE_VERSION
+ARG PYTHON_VERSION
+ARG TERRAFORM_VERSION
+ARG AVAILABLE_TERRAFORM_VERSIONS
+ARG TERRAGRUNT_VERSION
 
 USER root
 
@@ -92,13 +100,8 @@ RUN echo 'alias vim="nvim"' >> ~/.bashrc
 
 FROM ubuntu:latest AS runner
 
-ENV HOME=/root
-ENV NEOVIM_VERSION=0.11.3
-ENV BUN_INSTALL=${HOME}/.bun
-ENV XDG_DATA_HOME=/root/.local/share
-ENV NVIM_CONFIG_HOME=${HOME}/.config/nvim
-ENV LAZY_NVIM_DATA_HOME=${XDG_DATA_HOME}/nvim/lazy
-ENV PATH=${BUN_INSTALL}/bin:${PATH}
+ARG NEOVIM_VERSION
+ARG NODE_VERSION
 
 COPY --from=builder /root/.bash_env /root/.bash_env
 COPY --from=builder /root/.bashrc /root/.bashrc
@@ -158,14 +161,29 @@ RUN apt update
 
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# Install and configure neovim
+ENV HOME=/root
+ENV NVM_DIR=$HOME/.nvm
+ENV BUN_INSTALL=${HOME}/.bun
+ENV XDG_DATA_HOME=/root/.local/share
+ENV NVIM_CACHE_DIR=${HOME}/.cache/nvim
+ENV NVIM_CONFIG_HOME=${HOME}/.config/nvim
+ENV LAZY_NVIM_DATA_HOME=${XDG_DATA_HOME}/nvim/lazy
+ENV PATH=$NVM_DIR/versions/node/$NODE_VERSION/bin:${BUN_INSTALL}/bin:${PATH}
+ENV NODE_PATH=$NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
+ENV KULALA_NVIM_SCRIPTS_BUILD_DIR=${NVIM_CACHE_DIR}/kulala/scripts/build
+
+# Install and configure neovim with lazy.nvim and kulala.nvim
+# so we can use neovim in headless mode to run http requests
 RUN mkdir -p _neovim && curl -sL https://github.com/neovim/neovim/releases/download/v${NEOVIM_VERSION}/nvim-linux-x86_64.tar.gz | tar -xz -C _neovim && mv _neovim/nvim-linux-x86_64 /usr/local/nvim && rm -rf _neovim
 RUN ln -s /usr/local/nvim/bin/nvim /usr/bin/nvim
 RUN mkdir -p ${NVIM_CONFIG_HOME}
+RUN mkdir -p /root/.cache/nvim/kulala/scripts/build
 COPY ./nvim.lua ${NVIM_CONFIG_HOME}/init.lua
 RUN nvim --headless "+Lazy! sync" +qa
-RUN cd ${LAZY_NVIM_DATA_HOME}/kulala.nvim/lua/kulala/parser/scripts/engines/javascript/lib && bun install && bun run build
+RUN cd ${LAZY_NVIM_DATA_HOME}/kulala.nvim/lua/kulala/parser/scripts/engines/javascript/lib && bun install && bun run build && mv dist "$KULALA_NVIM_SCRIPTS_BUILD_DIR"
+RUN echo "#!/usr/bin/env bash" >> /usr/local/bin/kulala-cli && echo "${LAZY_NVIM_DATA_HOME}/kulala.nvim/lua/cli/kulala_cli.lua \"\$@\"" >> /usr/local/bin/kulala-cli && chmod +x /usr/local/bin/kulala-cli
+RUN mkdir -p /root/.local/state/nvim/kulala && \
+    echo '{"js_build_ver_local":"1.0.1","js_version":"5.3.3","news_ver":"5.3.3","parser_ver":"0.1.6"}' > /root/.local/state/nvim/kulala/settings.json
 RUN bun install -g prettier tree-sitter-cli
-
 # set cmd to bash
 CMD ["/bin/bash"]

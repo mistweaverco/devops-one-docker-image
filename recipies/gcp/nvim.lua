@@ -16,6 +16,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   {
     "mistweaverco/kulala.nvim",
+    version = "v5.3.0",
     opts = {},
   },
   {
