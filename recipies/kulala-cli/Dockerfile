@@ -6,18 +6,18 @@ USER root
 RUN apk add --no-cache \
     bash \
     curl \
-    git \
-    openssl \
-    python3 \
-    py3-pip \
-    wget \
-    make \
     gcc \
-    nodejs \
-    tar \
+    git \
     gzip \
+    make \
     neovim \
-    shadow
+    nodejs \
+    openssl \
+    py3-pip \
+    python3 \
+    shadow \
+    tar \
+    wget
 
 # Set up bash as default shell
 RUN chsh -s /bin/bash
@@ -50,7 +50,7 @@ RUN mkdir -p ${NVIM_CONFIG_HOME}
 RUN mkdir -p ${KULALA_NVIM_SCRIPTS_BUILD_DIR}
 COPY ./nvim.lua ${NVIM_CONFIG_HOME}/init.lua
 RUN nvim --headless "+Lazy! sync" +qa
-RUN cd ${LAZY_NVIM_DATA_HOME}/kulala.nvim/lua/kulala/parser/scripts/engines/javascript/lib && bun install && bun run build && mv dist "$KULALA_NVIM_SCRIPTS_BUILD_DIR"
+RUN cd ${LAZY_NVIM_DATA_HOME}/kulala.nvim/lua/kulala/parser/scripts/engines/javascript/lib && bun install && bun run build && mv dist "$KULALA_NVIM_SCRIPTS_BUILD_DIR" && rm -rf node_modules
 RUN echo "#!/usr/bin/env bash" >> /usr/local/bin/kulala-cli && echo "${LAZY_NVIM_DATA_HOME}/kulala.nvim/lua/cli/kulala_cli.lua \"\$@\"" >> /usr/local/bin/kulala-cli && chmod +x /usr/local/bin/kulala-cli
 RUN mkdir -p /root/.local/state/nvim/kulala && \
     echo '{"js_build_ver_local":"1.0.1","js_version":"5.3.3","news_ver":"5.3.3","parser_ver":"0.1.6"}' > /root/.local/state/nvim/kulala/settings.json
@@ -79,15 +79,16 @@ WORKDIR /app
 
 # Install final packages
 RUN apk add --no-cache \
-    curl \
+    bash \
     coreutils \
+    curl \
     git \
     jq \
     lua5.1 \
-    wget  \
-    bash \
     neovim \
-    shadow
+    nodejs \
+    shadow \
+    wget
 
 # Set up bash as default shell
 RUN chsh -s /bin/bash
